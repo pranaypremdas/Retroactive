@@ -42,7 +42,21 @@ public class ObjectFactory {
   }
 
   public static Entity createBed(String[] assets) {
-    Entity bed = createBaseInteractable(assets);
+    // Dummy method, eventually the intended entity will be returned from
+    // createPlayerBed or createNormalBed
+    return null;
+  }
+
+  public static Entity createPlayerBed(String[] assets) {
+    Entity bed = createBaseInteractable(assets, BodyType.StaticBody)
+            .addComponent(new BedActions());
+    bed.setScale(1.5f, 1f);
+    PhysicsUtils.setColliderShape(bed, 1f, 2f);
+    return bed;
+  }
+
+  public static Entity createNormalBed(String[] assets) {
+    Entity bed = createBaseObject(assets);
     bed.setScale(1.5f, 1f);
     PhysicsUtils.setColliderShape(bed, 1f, 2f);
     return bed;
@@ -51,30 +65,35 @@ public class ObjectFactory {
   public static Entity createDoor(String[] assets) {
 //    Entity door = createBaseInteractable(assets, BodyType.StaticBody)
 //            .addComponent(new DoorActions());
-    Entity door = new Entity();
-    return door;
+    return new Entity();
+  }
+
+  public static Entity createPlaceableBox(String[] assets) {
+    return createBaseInteractable(assets, BodyType.StaticBody)
+            .addComponent(new PlaceableBoxActions());
   }
 
   public static Entity createTv(String[] assets) {
-    Entity tv = createBaseChore(assets);
+    Entity tv = createBaseChore(assets, BodyType.StaticBody, ChoreList.TV)
+            .addComponent(new TvActions());
     PhysicsUtils.setColliderShape(tv, 1f, 1f);
     return tv;
   }
-  public static Entity createPlant(String[] assets) {
-    Entity plant = createBaseChore(assets);
-    PhysicsUtils.setColliderShape(plant, 1f, 1f);
-    return plant;
+
+  public static Entity createEnergyDrink(String[] assets) {
+    return createBaseInteractable(assets, BodyType.DynamicBody)
+            .addComponent(new DrinkActions())
+            .addComponent(new SingleUse());
   }
 
-  public static Entity createDishwasher(String[] assets) {
-    Entity dishWasher = createBaseChore(assets);
-    PhysicsUtils.setColliderShape(dishWasher, 1f, 1f);
-    return dishWasher;
+  public static Entity createBananaPeel(String[] assets) {
+    return createBaseInteractable(assets, BodyType.DynamicBody)
+            .addComponent(new BananaPeelActions());
   }
 
   public static Entity createPuddle(String[] assets){
-    Entity puddle = createBaseInteractable(assets);
-    puddle.setScale(1f,0.5f);
+    Entity puddle = createBaseInteractable(assets, BodyType.KinematicBody).addComponent(new BananaPeelActions());
+    puddle.setScale(1f, 0.5f);
     PhysicsUtils.setScaledCollider(puddle,1f,1f);
     return puddle;
   }
@@ -156,114 +175,25 @@ public class ObjectFactory {
     return bin;
   }
 
-  public static Entity createPottedPlant(String[] assets) {
-    Entity plant = createBaseObject(assets);
-    plant.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(plant, 0.5f, 0.5f);
-    return plant;
-  }
-
-  public static Entity createShelf(String[] assets) {
-    Entity shelf = createBaseObject(assets);
-    shelf.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(shelf, 0.5f, 0.5f);
-    return shelf;
-  }
-  public static Entity createTowelHanger(String[] assets) {
-    Entity towelHanger = createBaseObject(assets);
-    towelHanger.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(towelHanger, 0.5f, 1.5f);
-    return towelHanger;
-  }
-
-  public static Entity createClothesDrying(String[] assets) {
-    Entity clothes = createBaseObject(assets);
-    clothes.setScale(1.5f, 1f);
-    PhysicsUtils.setColliderShape(clothes, 1f, 2f);
-    return clothes;
-  }
-
-  public static Entity createDiningTable(String[] assets) {
-    Entity diningTable = createBaseObject(assets);
-    diningTable.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(diningTable, 0.5f, 1.5f);
-    return diningTable;
-  }
-
-  public static Entity createGameTable(String[] assets) {
-    Entity gameTable = createBaseObject(assets);
-    gameTable.setScale(1f, 2f);
-    PhysicsUtils.setScaledCollider(gameTable, 1f, 1.5f);
-    return gameTable;
-  }
-
-  public static Entity createNintendo(String[] assets) {
-    Entity nintendo = createBaseObject(assets);
-    nintendo.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(nintendo, 0.5f, 1.5f);
-    return nintendo;
-  }
-
-  public static Entity createCouchLarge(String[] assets) {
-    Entity couch = createBaseObject(assets);
-    couch.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(couch, 0.5f, 1.5f);
-    return couch;
-  }
-  public static Entity createCouchSmall(String[] assets) {
-    Entity couch = createBaseObject(assets);
-    couch.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(couch, 0.5f, 1.5f);
-    return couch;
-  }
-
-  public static Entity createStorageCabinet(String[] assets) {
-    Entity cabinet = createBaseObject(assets);
-    cabinet.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(cabinet, 0.5f, 1.5f);
-    return cabinet;
-  }
-
-  public static Entity createStove(String[] assets) {
-    Entity stove = createBaseObject(assets);
-    stove.setScale(0.5f, 0.5f);
-    PhysicsUtils.setScaledCollider(stove, 0.5f, 1.5f);
-    return stove;
-  }
-
-  public static Entity createFishTank(String[] assets) {
-    Entity fishTank = createBaseObject(assets);
-    PhysicsUtils.setScaledCollider(fishTank, 1f,1f);
-    return fishTank;
-  }
-  public static Entity createClock(String[] assets) {
-    Entity clock = createBaseObject(assets);
-    PhysicsUtils.setScaledCollider(clock, 1f,1f);
-    return clock;
-  }
-
-
   /**
    * Creates the object as a chore, and registers it as a chore to the ChoreController
    * @param assets the image and atlas assets of this object
+   * @param bodyType Static, kinematic or dynamic body type
+   * @param object The ChoreList ID of this object
    * @return The new entity of this obstacle
-   * */
-
-  //FORMAT: PATH, BODYTYPE, INTERACTID, CHOREID
-  public static Entity createBaseChore(String[] assets) {
-    Entity entity = createBaseInteractable(assets);
-    ServiceLocator.getChoreController().addChore(entity, getChoreType(assets[3]));
-    List<Chore> active = ServiceLocator.getChoreController().getChores();
+   */
+  public static Entity createBaseChore(String[] assets, BodyType bodyType, ChoreList object) {
+    Entity entity = createBaseInteractable(assets, bodyType);
+    ServiceLocator.getChoreController().addChore(entity, object);
     return entity;
   }
 
-  public static Entity createBaseInteractable(String[] assets) {
+  public static Entity createBaseInteractable(String[] assets, BodyType bodyType) {
     // Set interactable to have a base hitbox component
-    Entity obstacle = createBaseObject(assets)
+    Entity interactable = createBaseObject(assets)
             .addComponent(new HitboxComponent().setLayer(PhysicsLayer.OBSTACLE));
-    addInteraction(assets[2], obstacle);
-    PhysicsUtils.setScaledHitbox(obstacle, 1f, 1f);
-    return obstacle;
+    PhysicsUtils.setScaledHitbox(interactable, 1f, 1f);
+    return interactable;
   }
 
   public static Entity createBaseObject(String[] assets) {
