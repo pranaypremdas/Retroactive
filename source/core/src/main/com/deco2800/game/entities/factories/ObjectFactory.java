@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Factory to create obstacle entities.
@@ -42,30 +43,61 @@ public class ObjectFactory {
   }
 
   public static Entity createBed(String[] assets) {
+    // Dummy method, eventually the intended entity will be returned from
+    // createPlayerBed or createNormalBed
+    return null;
+  }
+
+  public static Entity createPlayerBed(String[] assets) {
     Entity bed = createBaseInteractable(assets);
     bed.setScale(1.5f, 1f);
     PhysicsUtils.setColliderShape(bed, 1f, 2f);
     return bed;
   }
 
+  public static Entity createNormalBed(String[] assets) {
+    Entity bed = createBaseObject(assets);
+    bed.setScale(1.5f, 1f);
+    PhysicsUtils.setColliderShape(bed, 1f, 2f);
+    return bed;
+  }
+
+  public static Entity createHorizontalDoor(String[] assets) {
+    Entity horizontalDoor = createBaseInteractable(assets);
+    return horizontalDoor;
+  }
+
+  public static Entity createVerticalDoor(String[] assets) {
+      Entity verticalDoor = createBaseInteractable(assets);
+      //Entity verticalDoor = new Entity();
+      return verticalDoor;
+  }
+
   public static Entity createDoor(String[] assets) {
 //    Entity door = createBaseInteractable(assets, BodyType.StaticBody)
 //            .addComponent(new DoorActions());
-    Entity door = new Entity();
-    return door;
+    return new Entity();
   }
+
 
   public static Entity createTv(String[] assets) {
     Entity tv = createBaseChore(assets);
     PhysicsUtils.setColliderShape(tv, 1f, 1f);
     return tv;
   }
+  public static Entity createPlant(String[] assets) {
+    Entity plant = createBaseChore(assets);
+    PhysicsUtils.setColliderShape(plant, 1f, 1f);
+    return plant;
+  }
+
 
   public static Entity createDishwasher(String[] assets) {
     Entity dishWasher = createBaseChore(assets);
     PhysicsUtils.setColliderShape(dishWasher, 1f, 1f);
     return dishWasher;
   }
+
 
   public static Entity createPuddle(String[] assets){
     Entity puddle = createBaseInteractable(assets);
@@ -231,15 +263,20 @@ public class ObjectFactory {
     PhysicsUtils.setScaledCollider(fishTank, 1f,1f);
     return fishTank;
   }
+  public static Entity createClock(String[] assets) {
+    Entity clock = createBaseObject(assets);
+    PhysicsUtils.setScaledCollider(clock, 1f,1f);
+    return clock;
+  }
 
 
   /**
    * Creates the object as a chore, and registers it as a chore to the ChoreController
+   * FORMAT: PATH, BODYTYPE, INTERACTID, CHOREID
    * @param assets the image and atlas assets of this object
    * @return The new entity of this obstacle
    * */
 
-  //FORMAT: PATH, BODYTYPE, INTERACTID, CHOREID
   public static Entity createBaseChore(String[] assets) {
     Entity entity = createBaseInteractable(assets);
     ServiceLocator.getChoreController().addChore(entity, getChoreType(assets[3]));
@@ -263,7 +300,7 @@ public class ObjectFactory {
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
     PhysicsUtils.setScaledCollider(obstacle, 1f, 1f);
     //obstacle.scaleHeight(1f);
-    if (assets[0] == "") {
+    if (Objects.equals(assets[0], "")) {
       return obstacle;
     }
     // Set obstacle to have a base render component
@@ -327,6 +364,17 @@ public class ObjectFactory {
         break;
       case "6":
         obstacle.addComponent(new WashingDishesActions());
+        break;
+      case "7":
+        obstacle.addComponent(new PlantActions());
+        break;
+      case "8":
+        obstacle.addComponent(new ShrubActions());
+        break;
+      case "9":
+        obstacle.addComponent(new HorizontalDoorActions());
+      case "10":
+        obstacle.addComponent(new VerticalDoorActions());
     }
   }
 
@@ -340,6 +388,10 @@ public class ObjectFactory {
         return ChoreList.PUDDLE;
       case "4":
         return ChoreList.DISHWASHER;
+      case "5":
+        return ChoreList.PLANT;
+      case "6":
+        return ChoreList.SHRUB;
       default:
         logger.debug("Invalid choreID provided");
         return null;

@@ -4,7 +4,6 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.deco2800.game.GdxGame;
 import com.deco2800.game.entities.Entity;
 import com.deco2800.game.entities.EntityService;
 import com.deco2800.game.entities.factories.RenderFactory;
@@ -38,7 +37,6 @@ public class MainMenuScreen extends ScreenAdapter {
           ".mp3"};
 
   private static final String[] buttonSounds = {
-          "sounds/confirm-shorter.ogg",
           "sounds/browse-short.ogg"
   };
 
@@ -64,7 +62,7 @@ public class MainMenuScreen extends ScreenAdapter {
             ServiceLocator.getResourceService().getAsset(backgroundMusic[0],
                     Music.class);
     music.setLooping(true);
-    music.setVolume(0.01f);
+    music.setVolume(0.2f);
     music.play();
   }
 
@@ -73,9 +71,9 @@ public class MainMenuScreen extends ScreenAdapter {
    * @param button button pressed
    */
   public static void playButtonSound(String button) {
-    Sound sound = ServiceLocator.getResourceService().getAsset(buttonSounds[1], Sound.class);
+    Sound sound = ServiceLocator.getResourceService().getAsset(buttonSounds[0], Sound.class);
     sound.play();
-    logger.info(button + " button sound played");
+    logger.info("{} button sound played", button);
   }
 
   @Override
@@ -144,16 +142,7 @@ public class MainMenuScreen extends ScreenAdapter {
     ServiceLocator.getEntityService().register(ui);
     Gdx.input.setInputProcessor(new MenuInputProcessor());
   }
-
-  /**
-   *       _          _          _          _          _
-   *     >(')____,  >(')____,  >(')____,  >(')____,  >(') ___,
-   *       (` =~~/    (` =~~/    (` =~~/    (` =~~/    (` =~~/
-   *    ~^~^`---'~^~^~^`---'~^~^~^`---'~^~^~^`---'~^~^~^`---'~^~^~
-   *
-   *
-   *
-   */
+  
 }
 
 

@@ -1,7 +1,6 @@
 package com.deco2800.game.screens.context;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,7 +13,6 @@ import com.deco2800.game.input.InputService;
 import com.deco2800.game.input.components.InputDecorator;
 import com.deco2800.game.rendering.RenderService;
 import com.deco2800.game.rendering.Renderer;
-import com.deco2800.game.screens.context.ContextInputProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,11 +22,13 @@ import org.slf4j.LoggerFactory;
 public class ContextScreen extends ScreenAdapter {
     private static final Logger logger = LoggerFactory.getLogger(ContextScreen.class);
     private static final String[] ContextTextures = {
-            "images/context_screen/context_screen.PNG",
-            "images/ui/screens/inactiveStart.png"
+            "images/objects/bed/bed_static.PNG"
     };
 
     private final Renderer renderer;
+    private Stage stage;
+    private static int screen = 1;
+    private static boolean skip = false;
 
     private static final String[] buttonSounds = {
             "sounds/confirm.ogg",
@@ -51,16 +51,35 @@ public class ContextScreen extends ScreenAdapter {
 
     public void playButtonSound() {
         Sound sound = ServiceLocator.getResourceService().getAsset(buttonSounds[0], Sound.class);
-
         sound.play();
-
         logger.info("enter button sound played on context screen launch");
     }
+
+    public static int getScreen() {
+        return screen;
+    }
+
+    public static void incrementScreen() {
+        screen++;
+    }
+
+    public static void setSkip() {
+
+        skip = true;
+    }
+
+    public static boolean getSkip() {
+        return skip;
+    }
+
 
     @Override
     public void render(float delta) {
         ServiceLocator.getEntityService().update();
         renderer.render();
+        if (stage != null) {
+            stage.draw();
+        }
     }
 
     @Override
@@ -118,7 +137,9 @@ public class ContextScreen extends ScreenAdapter {
         ui.addComponent(new ContextScreenDisplay())
                 .addComponent(new InputDecorator(stage, 10))
                 .addComponent(new ContextScreenActions());
+        ContextInputProcessor input = new ContextInputProcessor();
+        ui.addComponent(input);
+        Gdx.input.setInputProcessor(input);
         ServiceLocator.getEntityService().register(ui);
-        Gdx.input.setInputProcessor(new ContextInputProcessor());
     }
 }

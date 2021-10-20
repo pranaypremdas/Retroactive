@@ -1,15 +1,16 @@
 package com.deco2800.game.screens.context;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.deco2800.game.generic.ServiceLocator;
-import com.deco2800.game.ui.components.UIComponent;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.deco2800.game.ui.components.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * A ui component for displaying the Context screen.
@@ -19,12 +20,13 @@ public class ContextScreenDisplay extends UIComponent {
     private static final float Z_INDEX = 2f;
     private TextField txtUserName;
     private Label displayText;
-    private String text;
-    private long startTime;
+    private String text = "";
     private Table table;
-    private static int level = 1;
     private int charCount = 0;
     private String currentText = "";
+    private boolean story = false;
+    private boolean printed = false;
+    private boolean start = false;
 
     public ContextScreenDisplay() {
         super();
@@ -38,82 +40,87 @@ public class ContextScreenDisplay extends UIComponent {
 
     @Override
     public void update() {
-        /*long currentTime = ServiceLocator.getTimeSource().getTime();
+        print();
+    }
 
-        // Gradually display text across the textbox
-        if (level == 2 && charCount < text.length()) {
+    private void print() {
+        int rowHeight = Gdx.graphics.getHeight() / 16;
+        int colWidth = Gdx.graphics.getWidth() / 10;
+        if (charCount < this.text.length()) {
             currentText += text.charAt(charCount);
             displayText.setText(currentText);
+            if (charCount != 0 && text.charAt(charCount - 1) == '.') {
+                printWait(500);
+            } else if (charCount != 0 && text.charAt(charCount - 1) == '?') {
+                printWait(2000);
+            }
+            printWait(50);
             charCount += 1;
-        }*/
+        } if (charCount == 10 && ContextScreen.getSkip() && !printed) {
+            printed = true;
+            Label skip = new Label("PRESS ENTER TO SKIP", skin, "title");
+            skip.setFontScale(1f);
+            skip.setPosition(colWidth, rowHeight);
+            skip.addAction(Actions.alpha(0));
+            skip.addAction(Actions.forever(Actions.fadeIn(10f)));
+            stage.addActor(skip);
+        } else if (charCount != 0 && charCount == text.length() &&!printed) {
+            printed = true;
+            ContextScreen.setSkip();
+            Label cont = new Label("PRESS ENTER TO CONTINUE", skin, "title");
+            cont.setFontScale(1f);
+            cont.setPosition(colWidth, rowHeight);
+            cont.addAction(Actions.alpha(0));
+            cont.addAction(Actions.forever(Actions.fadeIn(5f)));
+            stage.addActor(cont);
+            /*Image image = new Image(ServiceLocator.getResourceService()
+                    .getAsset("images/objects/bed/bed_static.PNG", Texture.class));
+            image.setPosition(colWidth*6, rowHeight);
+            image.addAction(Actions.alpha(0));
+            image.addAction(Actions.forever(Actions.fadeIn(10f)));
+            stage.addActor(image);*/
+        } if (charCount == 4) {
+            this.start = true;
+        }
     }
 
 
+    private void printWait(int timeout) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(timeout);
+        } catch (InterruptedException e) {
+            logger.error("Sleep interrupted");
+            Thread.currentThread().interrupt();
+        }
+    }
+
     private void addActors() {
-        table = new Table();
-        table.setFillParent(true);
-        Label enterName = new Label("PLEASE ENTER YOUR NAME", skin, "title");
-        enterName.addAction(Actions.alpha(0));
-        enterName.addAction(Actions.forever(Actions.sequence(Actions.fadeIn(1f), Actions.fadeOut(1f))));
-
-        this.txtUserName = new TextField("", skin);
-
-        table.add(enterName).padTop(50f);
-        table.row();
-        table.add(txtUserName).padTop(50f);
-        stage.addActor(table);
-        stage.setKeyboardFocus(txtUserName);
-        stage.addActor(table);
-        Gdx.input.setInputProcessor(stage);
-
-        /*switch(level++) {
+        switch(ContextScreen.getScreen()) {
             case 1:
-
-                break;*/
-            /*case 2:
+                table = new Table();
+                table.setFillParent(true);
                 int colWidth = Gdx.graphics.getWidth() / 10;
-                this.text = "It's 12:00pm. The year is currently 1982. It's a school night. You've nearly finished your " +
-                        "new game, but your mother is awake and she knows that you are too. You have until 2AM to" +
-                        " get to bed or else she's going to catch you; and if she does? \n\n" +
-                        "Well, it may as well be the end of the world.";
-                displayText = new Label("", skin, "large");
-                displayText.setSize(colWidth*6f, Gdx.graphics.getHeight()/2f);
-                displayText.setPosition(colWidth*2f, Gdx.graphics.getHeight()/2f);
-                displayText.setFontScale((colWidth*10f)/1280f); // Scale font to screen size
-                displayText.setWrap(true);
-                stage.addActor(displayText);
-                startTime = ServiceLocator.getTimeSource().getTime();
-                break;*/
-        /*
-        table.setFillParent(true);
-        // Add button container to the table.
-        // Easily sorts buttons vertically and separates padding settings from table.
-        // It is assumed that more buttons will eventually be added.
-        VerticalGroup buttonContainer = new VerticalGroup();
-        buttonContainer.fill();
-        buttonContainer.bottom().right();
-        buttonContainer.space(10f);
+                int rowHeight = Gdx.graphics.getHeight() / 16;
+                Label enterName = new Label("PLEASE ENTER YOUR GAMER TAG", skin, "title");
+                enterName.setFontScale((colWidth*10f)/1000f);
+                enterName.addAction(Actions.alpha(0));
+                enterName.addAction(Actions.forever(Actions.sequence(Actions.fadeIn(1f), Actions.fadeOut(1f))));
 
+                this.txtUserName = new TextField("", skin);
+                this.txtUserName.setScale(5f);
 
-        HorizontalGroup imageContainer = new HorizontalGroup();
-        imageContainer.fill();
-        stage.addActor(table);
-
-        table = new Table();
-        table.setFillParent(true);
-
-        //This is the image of the mum and the bed, they were combined as a PNG as it is easier to
-        //be added rather than build multiple assets for it. This is because there are no functional
-        //Actions by them
-        Image context =
-                new Image(
-                        ServiceLocator.getResourceService()
-                                .getAsset("images/context_screen/context_screen.PNG", Texture.class));
-
-        table.add(context);
-        table.row();
-        table.add(buttonContainer).padTop(30f);
-         */
+                table.add(enterName).padTop(50f);
+                table.row();
+                table.add(txtUserName).padTop(50f);
+                stage.addActor(table);
+                stage.setKeyboardFocus(txtUserName);
+                stage.addActor(table);
+                Gdx.input.setInputProcessor(stage);
+                break;
+            case 2:
+                tellStory();
+                break;
+        }
 
     }
 
@@ -126,10 +133,50 @@ public class ContextScreenDisplay extends UIComponent {
     }
 
     public void displayWarning() {
-        System.out.println("invalid name");
+        Label warningLabel = new Label("Please input a valid username", skin, "large");
+        stage.addActor(warningLabel);
     }
 
-    @Override
+    public void clearTable() {
+        table.clear();
+        stage.clear();
+    }
+
+    public void tellStory() {
+        this.story = true;
+        int rowHeight = Gdx.graphics.getHeight() / 16;
+        int colWidth = Gdx.graphics.getWidth() / 10;
+        displayText = new Label("", skin, "large");
+        displayText.setSize(colWidth*8f, rowHeight*12f);
+        displayText.setPosition(colWidth, (float) rowHeight * 3);
+        displayText.setFontScale((colWidth*10f)/1280f); // Scale font to screen size
+        displayText.setWrap(true);
+        stage.addActor(displayText);
+        switch (ContextScreen.getScreen()) {
+            case 1:
+                this.text = "It's 12:00pm. The year is currently 1982. It's a school night. \n\n\n You've nearly " +
+                        "finished your" +
+                        " new game, but your mother is awake and she knows that you are too.\n\n\n You have until she" +
+                        " gets home at 2:00AM to get to bed or else she's going to catch you; and if she does?\n\n\n\n\n " +
+                        "Well, it may as well be the end of the world. . .\n\n\n\n Movement: ASDW\n\n Interact: " +
+                        "E\n\n Sprint: shift" ;
+                break;
+            case 2:
+                this.text = "You've escaped with your life this time, but the odds are against you tonight" +
+                        ".\n\n\n You've put off the chores in favor of finishing the new Exhale of the City (TM) game. " +
+                        "\n\n\n T-minus two hours until Mum gets home, complete your chores and head to bed!";
+                break;
+        }
+    }
+
+    public boolean getStoryStatus() {
+        return this.story;
+    }
+
+    public boolean getPrintStatus() {
+        return this.start;
+    }
+
     public void draw(SpriteBatch batch) {
         // draw is handled by the stage
     }
