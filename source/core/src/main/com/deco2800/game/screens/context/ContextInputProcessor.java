@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ContextInputProcessor extends UIComponent implements InputProcessor {
-    private final Logger logger = LoggerFactory.getLogger(com.deco2800.game.screens.context.ContextInputProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(ContextInputProcessor.class);
 
     @Override
     public boolean keyDown(int keycode) {

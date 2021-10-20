@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LeadBdInputProcessor implements InputProcessor {
-    private final Logger logger = LoggerFactory.getLogger(com.deco2800.game.screens.leaderboard.LeadBdInputProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(LeadBdInputProcessor.class);
 
     @Override
     public boolean keyDown(int keycode) {
