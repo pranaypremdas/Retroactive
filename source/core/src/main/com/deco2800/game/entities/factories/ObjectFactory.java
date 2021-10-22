@@ -108,9 +108,24 @@ public class ObjectFactory {
 
   public static Entity createBookcase(String[] assets) {
     Entity bookcase = createBaseObject(assets);
+    bookcase.setScale(1f, 1.5f);
     PhysicsUtils.setColliderShape(bookcase, 1f, 1f);
     PhysicsUtils.setColliderOffset(bookcase, 0, 0.3f);
     return bookcase;
+  }
+
+  public static Entity createVanity(String[] assets) {
+      Entity vanity = createBaseObject(assets);
+      vanity.setScale(0.75f, 1.25f);
+      PhysicsUtils.setColliderShape(vanity, 1f, 1f);
+      return vanity;
+  }
+
+  public static Entity createGameTable(String[] assets) {
+      Entity game = createBaseObject(assets);
+      game.setScale(1.5f, 1f);
+      PhysicsUtils.setColliderShape(game, 1f, 2f);
+      return game;
   }
 
   public static Entity createBath(String[] assets) {
@@ -163,6 +178,13 @@ public class ObjectFactory {
     return side;
   }
 
+  public static Entity createNewLamp(String[] assets) {
+      Entity lamp = createBaseObject(assets);
+      lamp.setScale(1f, 1f);
+      PhysicsUtils.setScaledCollider(lamp, 0.5f, 0.5f);
+      return lamp;
+  }
+
   public static Entity createFridge(String[] assets) {
     Entity fridge = createBaseObject(assets);
     fridge.setScale(1f, 1.5f);
@@ -205,9 +227,16 @@ public class ObjectFactory {
 
   public static Entity createClothesDrying(String[] assets) {
     Entity clothes = createBaseObject(assets);
-    clothes.setScale(1.5f, 1f);
+    clothes.setScale(2f, 2f);
     PhysicsUtils.setColliderShape(clothes, 1f, 2f);
     return clothes;
+  }
+
+  public static Entity createWashingMachine(String[] assets) {
+      Entity machine = createBaseObject(assets);
+      machine.setScale(1f,1f);
+      PhysicsUtils.setColliderShape(machine, 1f, 1f);
+      return machine;
   }
 
   public static Entity createDiningTable(String[] assets) {
@@ -215,13 +244,6 @@ public class ObjectFactory {
     diningTable.setScale(0.5f, 0.5f);
     PhysicsUtils.setScaledCollider(diningTable, 0.5f, 1.5f);
     return diningTable;
-  }
-
-  public static Entity createGameTable(String[] assets) {
-    Entity gameTable = createBaseObject(assets);
-    gameTable.setScale(1f, 2f);
-    PhysicsUtils.setScaledCollider(gameTable, 1f, 1.5f);
-    return gameTable;
   }
 
   public static Entity createNintendo(String[] assets) {
@@ -237,6 +259,15 @@ public class ObjectFactory {
     PhysicsUtils.setScaledCollider(couch, 0.5f, 1.5f);
     return couch;
   }
+
+  public static Entity createCouch(String[] assets) {
+    Entity lounge = createBaseObject(assets);
+    lounge.setScale(2f,1.5f);
+    PhysicsUtils.setColliderShape(lounge, 1f, 2.5f);
+    PhysicsUtils.setColliderOffset(lounge, 0.5f, 0);
+    return lounge;
+  }
+
   public static Entity createCouchSmall(String[] assets) {
     Entity couch = createBaseObject(assets);
     couch.setScale(0.5f, 0.5f);
@@ -246,7 +277,7 @@ public class ObjectFactory {
 
   public static Entity createStorageCabinet(String[] assets) {
     Entity cabinet = createBaseObject(assets);
-    cabinet.setScale(0.5f, 0.5f);
+    cabinet.setScale(1f, 1f);
     PhysicsUtils.setScaledCollider(cabinet, 0.5f, 1.5f);
     return cabinet;
   }
@@ -279,6 +310,20 @@ public class ObjectFactory {
 
   public static Entity createBaseChore(String[] assets) {
     Entity entity = createBaseInteractable(assets);
+    ServiceLocator.getChoreController().addChore(entity, getChoreType(assets[3]));
+    List<Chore> active = ServiceLocator.getChoreController().getChores();
+    return entity;
+  }
+  public static Entity createSmallBaseChore(String[] assets) {
+    Entity entity = createBaseInteractable(assets);
+    entity.setScale(0.5f, 0.5f);
+    ServiceLocator.getChoreController().addChore(entity, getChoreType(assets[3]));
+    List<Chore> active = ServiceLocator.getChoreController().getChores();
+    return entity;
+  }
+  public static Entity createSmallestBaseChore(String[] assets) {
+    Entity entity = createBaseInteractable(assets);
+    entity.setScale(0.25f, 0.25f);
     ServiceLocator.getChoreController().addChore(entity, getChoreType(assets[3]));
     List<Chore> active = ServiceLocator.getChoreController().getChores();
     return entity;
@@ -316,7 +361,8 @@ public class ObjectFactory {
       // Add all atlas regions as animations to the component
       for (TextureAtlas.AtlasRegion region : new Array.ArrayIterator<>(textureAtlas.getRegions())) {
         if (!animator.hasAnimation(region.name)) {
-          if (region.name.equals("TV_on1") || region.name.equals("TV_onh1")) {
+          if (region.name.equals("TV_on1") || region.name.equals("TV_onh1")
+                  || region.name.equals("dust1")) {
             animator.addAnimation(region.name, 0.1f, Animation.PlayMode.LOOP);
           } else {
             animator.addAnimation(region.name, 1f);
@@ -373,8 +419,20 @@ public class ObjectFactory {
         break;
       case "9":
         obstacle.addComponent(new HorizontalDoorActions());
+        break;
       case "10":
         obstacle.addComponent(new VerticalDoorActions());
+        break;
+      case "11":
+        obstacle.addComponent(new BookActions())
+                .addComponent(new SingleUse());
+        break;
+      case "12":
+        obstacle.addComponent(new TrashActions())
+                .addComponent(new SingleUse());
+        break;
+      default:
+        logger.debug("Invalid interactionID provided");
     }
   }
 
@@ -392,6 +450,10 @@ public class ObjectFactory {
         return ChoreList.PLANT;
       case "6":
         return ChoreList.SHRUB;
+      case "7":
+        return ChoreList.BOOKS;
+      case "8":
+        return ChoreList.TRASH;
       default:
         logger.debug("Invalid choreID provided");
         return null;
